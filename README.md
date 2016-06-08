@@ -1,6 +1,6 @@
 # JHGPixels
 
-JHGPixels is a basic libary for manipulating pixels. It allows a program to set a pixel’s position and color. It supports the following pixel formats:
+JHGPixels is a basic library for manipulating pixels. It allows a program to set a pixel’s position and color. It supports the following pixel formats:
 
 JHGBYTERGB - Red Green Blue 8 bits per channel
 
