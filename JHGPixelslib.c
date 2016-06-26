@@ -259,6 +259,36 @@ JHGPixels_scene JHGPixels_SceneMerge( JHGPixels_scene scene1, JHGPixels_scene sc
     return merged ;
 }
 
+JHGPixels_scene JHGPixels_BlockMerge( JHGPixels_scene scene1, JHGPixels_scene scene2, int pos_x, int pos_y ) {
+    
+    int size1 = (scene1->x * scene1->y) ;
+    
+    int size2 = (scene2->x * scene2->y) ;
+    
+    JHGPixels_scene merged = NULL ;
+    
+    if ( size1 == size2 ) {
+        
+        JHGPixels_BlockCopy(scene1, scene2, pos_x, pos_y) ;
+        
+        merged = scene1 ;
+        
+    } else if (size1 > size2) {
+        
+        JHGPixels_BlockCopy(scene1, scene2, pos_x, pos_y) ;
+        
+        merged = scene1 ;
+        
+    } else if (size2 > size1) {
+        
+        JHGPixels_BlockCopy(scene2, scene1, pos_x, pos_y) ;
+        
+        merged = scene2 ;
+    }
+    
+    return merged ;
+}
+
 void JHGPixels_FullCopy( JHGPixels_scene dest, JHGPixels_scene src ) {
     
     memcpy(dest->pixelarray, src->pixelarray, (dest->x * dest->y) * sizeof(JHGsubpixel)) ;

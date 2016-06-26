@@ -34,6 +34,7 @@ JHGPixels_scene JHGPixels_newscene( int x, int y, JHGPixelcolor_Object backgroun
 void JHGPixels_SetBackGroundColor(JHGPixels_scene scene, JHGsubpixel red, JHGsubpixel blue, JHGsubpixel green) ;
 JHGPixels_scene JHGPixels_SceneClone( JHGPixels_scene scene ) ;
 JHGPixels_scene JHGPixels_SceneMerge( JHGPixels_scene scene1, JHGPixels_scene scene2 ) ;
+JHGPixels_scene JHGPixels_BlockMerge( JHGPixels_scene scene1, JHGPixels_scene scene2, int pos_x, int pos_y ) ;
 void JHGPixels_FullCopy( JHGPixels_scene dest, JHGPixels_scene src ) ;
 void JHGPixels_BlockCopy( JHGPixels_scene scene, JHGPixels_scene block, int pos_x, int pos_y ) ;
 void JHGPixels_SetPixel( JHGPixels_scene scene, int x, int y, JHGsubpixel red, JHGsubpixel blue, JHGsubpixel green ) ;
