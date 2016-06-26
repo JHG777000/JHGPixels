@@ -71,18 +71,18 @@ static void JHGPixels_init( JHGPixels_scene scene )  {
     int i = 0 ;
     
     int j = 0 ;
-   
-        while ( i < (scene->x ) ) {
+        
+          while ( i < (scene->x ) ) {
             
-            j = 0 ;
+              j = 0 ;
             
-            while ( j < (scene->y ) ) {
+              while ( j < (scene->y ) ) {
                 
-                JHGPixels_SetPixel(scene, i, j, scene->background.r, scene->background.b, scene->background.g) ;
+                  JHGPixels_SetPixel(scene, i, j, scene->background.r, scene->background.b, scene->background.g) ;
                 
-                j++;
-            }
-       i++ ;
+                 j++;
+              }
+         i++ ;
     }
 }
 
@@ -147,6 +147,8 @@ static void JHGPixels_BYTE_RBG_GET( JHGRawData pixelarray, int rk, JHGsubpixel* 
 
 static void JHGPixels_SetFormat( JHGPixels_scene scene, JHGPixelFormatType format ) {
     
+    scene->format_type = format ;
+    
     switch (format) {
             
         case JHGBYTERGB:
@@ -199,7 +201,7 @@ JHGPixels_scene JHGPixels_newscene( int x, int y, JHGPixelcolor_Object backgroun
     newscene->y = y ;
     
     newscene->background = background ;
-        
+    
     newscene->pixelarray = (JHGRawData) malloc( (newscene->x * newscene->y * newscene->f_size) ) ;
         
     if ( newscene->pixelarray == NULL ) return NULL ;
@@ -218,17 +220,76 @@ void JHGPixels_SetBackGroundColor( JHGPixels_scene scene, JHGsubpixel red, JHGsu
     scene->background.g = green ;
 }
 
-void JHGPixels_BlockCopy( JHGPixels_scene scene, int x, int y, int src_size, JHGRawData src ) {
+JHGPixels_scene JHGPixels_SceneClone( JHGPixels_scene scene ) {
     
-    int rk = ( x * scene->f_size ) + ( y * scene->x * scene->f_size ) ;
+    JHGPixels_scene clone = JHGPixels_newscene(scene->x, scene->y, scene->background, scene->format_type) ;
     
-    if ( (rk + src_size) > (scene->x * scene->f_size * scene->y * scene->f_size) ) return ;
+    JHGPixels_FullCopy(clone, scene) ;
     
-    JHGRawData dest = scene->pixelarray ;
+    return clone ;
+}
+
+JHGPixels_scene JHGPixels_SceneMerge( JHGPixels_scene scene1, JHGPixels_scene scene2 ) {
     
-    dest = &dest[rk] ;
+    int size1 = (scene1->x * scene1->y) ;
     
-    memcpy(dest, src, src_size) ;
+    int size2 = (scene2->x * scene2->y) ;
+    
+    JHGPixels_scene merged = NULL ;
+    
+    if ( size1 == size2 ) {
+        
+        JHGPixels_FullCopy(scene1, scene2) ;
+        
+        merged = scene1 ;
+        
+    } else if (size1 > size2) {
+        
+        JHGPixels_BlockCopy(scene1, scene2, 0, 0) ;
+        
+        merged = scene1 ;
+        
+    } else if (size2 > size1) {
+        
+        JHGPixels_BlockCopy(scene2, scene1, 0, 0) ;
+        
+        merged = scene2 ;
+    }
+    
+    return merged ;
+}
+
+void JHGPixels_FullCopy( JHGPixels_scene dest, JHGPixels_scene src ) {
+    
+    memcpy(dest->pixelarray, src->pixelarray, (dest->x * dest->y) * sizeof(JHGsubpixel)) ;
+}
+
+void JHGPixels_BlockCopy( JHGPixels_scene scene, JHGPixels_scene block, int pos_x, int pos_y ) {
+    
+    int i = 0 ;
+    
+    int j = 0 ;
+    
+    JHGsubpixel red, blue, green ;
+    
+    while (i < block->x) {
+        
+        j = 0 ;
+        
+        while (j < block->y) {
+            
+            JHGPixels_GetPixel(block, i, j, &red, &blue, &green) ;
+            
+            if ( ((i+pos_x) >= 0) && ((i+pos_x) < scene->x) && ((j+pos_y) >= 0) && ((j+pos_y) < scene->y) )
+            
+            JHGPixels_SetPixel(scene, (i+pos_x), (j+pos_y), red, blue, green) ;
+            
+            j++ ;
+        }
+        
+        i++ ;
+    }
+
 }
 
 void JHGPixels_SetPixel( JHGPixels_scene scene, int x, int y, JHGsubpixel red, JHGsubpixel blue, JHGsubpixel green ) {
