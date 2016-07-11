@@ -46,44 +46,15 @@ void JHGPixels_FastColorSet( JHGsubpixel pixelarray[], const JHGsubpixel red, co
     }
 }
 
-void JHGPixels_Reset( JHGPixels_scene scene, JHGsubpixel red, JHGsubpixel blue, JHGsubpixel green ) {
+void JHGPixels_Reset( JHGPixels_scene scene ) {
     
-    JHGPixels_FastColorSet( scene->pixelarray, red, blue, green, ( scene->x * (scene->y * scene->f_size) ), scene->f_size, scene->format ) ;
-}
-
-void JHGPixels_ResetFast( JHGPixels_scene scene, JHGsubpixel value ) {
-    
-    JHGPixels_FastMonoColorSet( scene->pixelarray, value, ( scene->x * (scene->y * scene->f_size) ) ) ;
-}
-
-void JHGPixels_ResetWithBackGround( JHGPixels_scene scene ) {
- 
-    JHGPixels_Reset( scene, scene->background.r, scene->background.b, scene->background.g ) ;
-}
-
-void JHGPixels_ResetWithNoBackGround( JHGPixels_scene scene ) {
-    
-    JHGPixels_ResetFast( scene, 0 ) ;
+    JHGPixels_FullCopy(scene, scene->background_scene) ;
 }
 
 static void JHGPixels_init( JHGPixels_scene scene )  {
     
-    int i = 0 ;
-    
-    int j = 0 ;
-        
-          while ( i < (scene->x ) ) {
-            
-              j = 0 ;
-            
-              while ( j < (scene->y ) ) {
-                
-                  JHGPixels_SetPixel(scene, i, j, scene->background.r, scene->background.b, scene->background.g) ;
-                
-                 j++;
-              }
-         i++ ;
-    }
+    JHGPixels_FastColorSet(scene->pixelarray, scene->background.r, scene->background.b, scene->background.g, scene->x * scene->y, scene->f_size, scene->format) ;
+
 }
 
 static void JHGPixels_INT_8_8_8_8_REV_BGRA( JHGRawData pixelarray, int rk, JHGsubpixel red, JHGsubpixel blue, JHGsubpixel green ) {
@@ -186,6 +157,31 @@ static void JHGPixels_SetFormat( JHGPixels_scene scene, JHGPixelFormatType forma
     }
 }
 
+static JHGPixels_scene JHGPixels_newbackground( int x, int y, JHGPixelcolor_Object background, JHGPixelFormatType format ) {
+    
+    JHGPixels_scene newscene ;
+    
+    newscene = (JHGPixels_scene) malloc(sizeof(JHGPixels_scene_object)) ;
+    
+    if ( newscene == NULL ) return NULL ;
+    
+    JHGPixels_SetFormat(newscene,format) ;
+    
+    newscene->x = x ;
+    
+    newscene->y = y ;
+    
+    newscene->background = background ;
+    
+    newscene->pixelarray = (JHGRawData) malloc( (newscene->x * newscene->y * newscene->f_size) ) ;
+    
+    if ( newscene->pixelarray == NULL ) return NULL ;
+    
+    newscene->background_scene = NULL ;
+    
+    return newscene ;
+}
+
 JHGPixels_scene JHGPixels_newscene( int x, int y, JHGPixelcolor_Object background, JHGPixelFormatType format ) {
     
     JHGPixels_scene newscene ;
@@ -205,8 +201,10 @@ JHGPixels_scene JHGPixels_newscene( int x, int y, JHGPixelcolor_Object backgroun
     newscene->pixelarray = (JHGRawData) malloc( (newscene->x * newscene->y * newscene->f_size) ) ;
         
     if ( newscene->pixelarray == NULL ) return NULL ;
-    
-    JHGPixels_init(newscene) ;
+        
+    newscene->background_scene = JHGPixels_newbackground(x, y, background, format) ;
+        
+    JHGPixels_init(newscene->background_scene) ;
     
     return newscene ;
 }
@@ -218,6 +216,8 @@ void JHGPixels_SetBackGroundColor( JHGPixels_scene scene, JHGsubpixel red, JHGsu
     scene->background.b = blue ;
     
     scene->background.g = green ;
+    
+    JHGPixels_init(scene->background_scene) ;
 }
 
 JHGPixels_scene JHGPixels_SceneClone( JHGPixels_scene scene ) {
@@ -291,7 +291,7 @@ JHGPixels_scene JHGPixels_BlockMerge( JHGPixels_scene scene1, JHGPixels_scene sc
 
 void JHGPixels_FullCopy( JHGPixels_scene dest, JHGPixels_scene src ) {
     
-    memcpy(dest->pixelarray, src->pixelarray, (dest->x * dest->y) * sizeof(JHGsubpixel)) ;
+    memcpy(dest->pixelarray, src->pixelarray, dest->x * dest->y * sizeof(JHGsubpixel) * src->f_size) ;
 }
 
 void JHGPixels_BlockCopy( JHGPixels_scene scene, JHGPixels_scene block, int pos_x, int pos_y ) {
@@ -337,6 +337,8 @@ void JHGPixels_GetPixel( JHGPixels_scene scene, int x, int y, JHGsubpixel* red, 
 }
 
 void JHGPixels_scenefree( JHGPixels_scene scene )  {
+    
+    if (scene->background_scene != NULL) JHGPixels_scenefree(scene->background_scene) ;
     
     free(scene->pixelarray) ;
     

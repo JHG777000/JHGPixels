@@ -26,7 +26,7 @@ typedef enum { JHGBYTERGB, JHGBYTERBG, JHGINT8888REVBGRA} JHGPixelFormatType ;
 typedef struct { JHGsubpixel r ; JHGsubpixel g ; JHGsubpixel b ; } JHGPixelcolor_Object ;
 typedef void (*JHGPixelsFormatFunc)(JHGRawData pixelarray, int rk, JHGsubpixel red, JHGsubpixel blue, JHGsubpixel green) ;
 typedef void (*JHGPixelsGetFunc)(JHGRawData pixelarray, int rk, JHGsubpixel* red, JHGsubpixel* blue, JHGsubpixel* green) ;
-typedef struct JHGPixels_scene_s { JHGPixelcolor_Object background ; JHGRawData pixelarray ;
+typedef struct JHGPixels_scene_s { JHGPixelcolor_Object background ; struct JHGPixels_scene_s* background_scene ; JHGRawData pixelarray ;
 JHGPixelFormatType format_type ; JHGPixelsFormatFunc format ; JHGPixelsGetFunc get ; int f_size ; int x ; int y ; } JHGPixels_scene_object ;
 typedef JHGPixels_scene_object* JHGPixels_scene ;
 
@@ -41,10 +41,7 @@ void JHGPixels_SetPixel( JHGPixels_scene scene, int x, int y, JHGsubpixel red, J
 void JHGPixels_GetPixel( JHGPixels_scene scene, int x, int y, JHGsubpixel* red, JHGsubpixel* blue, JHGsubpixel* green ) ;
 void JHGPixels_FastMonoColorSet( JHGsubpixel pixelarray[], const JHGsubpixel value, const int size ) ;
 void JHGPixels_FastColorSet( JHGsubpixel pixelarray[], const JHGsubpixel red, const JHGsubpixel blue, const JHGsubpixel green, const int size, const int f_size, JHGPixelsFormatFunc format ) ;
-void JHGPixels_Reset( JHGPixels_scene scene, JHGsubpixel red, JHGsubpixel blue, JHGsubpixel green ) ;
-void JHGPixels_ResetFast( JHGPixels_scene scene, JHGsubpixel value ) ;
-void JHGPixels_ResetWithBackGround( JHGPixels_scene scene ) ;
-void JHGPixels_ResetWithNoBackGround( JHGPixels_scene scene ) ;
+void JHGPixels_Reset( JHGPixels_scene scene ) ;
 void JHGPixels_scenefree( JHGPixels_scene scene ) ;
 
 void* JHG_DrawPixels(JHGPixels_scene pixelframe, int *x, int *y) ;
