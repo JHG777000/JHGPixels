@@ -291,7 +291,7 @@ JHGPixels_scene JHGPixels_BlockMerge( JHGPixels_scene scene1, JHGPixels_scene sc
 
 void JHGPixels_FullCopy( JHGPixels_scene dest, JHGPixels_scene src ) {
     
-    memcpy(dest->pixelarray, src->pixelarray, dest->x * dest->y * sizeof(JHGsubpixel) * src->f_size) ;
+    memcpy(dest->pixelarray, src->pixelarray, dest->x * dest->y * sizeof(JHGsubpixel) * dest->f_size) ;
 }
 
 void JHGPixels_BlockCopy( JHGPixels_scene scene, JHGPixels_scene block, int pos_x, int pos_y ) {
