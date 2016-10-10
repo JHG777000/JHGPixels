@@ -53,7 +53,7 @@ void JHGPixels_Reset( JHGPixels_scene scene ) {
 
 static void JHGPixels_init( JHGPixels_scene scene )  {
     
-    JHGPixels_FastColorSet(scene->pixelarray, scene->background.r, scene->background.b, scene->background.g, scene->x * scene->y, scene->f_size, scene->format) ;
+    JHGPixels_FastColorSet(scene->pixelarray, scene->background.r, scene->background.b, scene->background.g, scene->x * scene->y * scene->f_size, scene->f_size, scene->format) ;
 
 }
 
@@ -206,16 +206,18 @@ JHGPixels_scene JHGPixels_newscene( int x, int y, JHGPixelcolor_Object backgroun
         
     JHGPixels_init(newscene->background_scene) ;
     
+    JHGPixels_Reset(newscene) ;
+    
     return newscene ;
 }
 
 void JHGPixels_SetBackGroundColor( JHGPixels_scene scene, JHGsubpixel red, JHGsubpixel blue, JHGsubpixel green ) {
     
-    scene->background.r = red ;
+    scene->background_scene->background.r = scene->background.r = red ;
     
-    scene->background.b = blue ;
+    scene->background_scene->background.b = scene->background.b = blue ;
     
-    scene->background.g = green ;
+    scene->background_scene->background.g = scene->background.g = green ;
     
     JHGPixels_init(scene->background_scene) ;
 }
