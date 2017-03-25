@@ -347,6 +347,16 @@ void JHGPixels_scenefree( JHGPixels_scene scene )  {
     free(scene) ;
 }
 
+int JHGPixels_GetX( JHGPixels_scene scene ) {
+    
+    return scene->x ;
+}
+
+int JHGPixels_GetY( JHGPixels_scene scene ) {
+    
+    return scene->y ;
+}
+
 void* JHG_DrawPixels(JHGPixels_scene pixelframe, int *x, int *y) {
     
     *x = pixelframe->x ;

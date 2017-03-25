@@ -44,6 +44,10 @@ void JHGPixels_FastColorSet( JHGsubpixel pixelarray[], const JHGsubpixel red, co
 void JHGPixels_Reset( JHGPixels_scene scene ) ;
 void JHGPixels_scenefree( JHGPixels_scene scene ) ;
 
+int JHGPixels_GetX( JHGPixels_scene scene ) ;
+
+int JHGPixels_GetY( JHGPixels_scene scene ) ;
+
 void* JHG_DrawPixels(JHGPixels_scene pixelframe, int *x, int *y) ;
 
 #endif
